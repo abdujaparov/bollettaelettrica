@@ -1,11 +1,21 @@
 import PyPDF2
 import pathlib
+import string
 
 
 def __getFornitura(fp):
     fornitura=''
-
+    stringa_fornitura = 'Contratto Numero'
+    pos=fp.find(stringa_fornitura)
+    fornitura=fp[pos+len(stringa_fornitura):pos+24]
     return fornitura
+
+def __getPod(fp):
+    pod=''
+    stringa_pod='Codice POD'
+    pos=fp.find(stringa_pod)
+    pod=fp[pos+len(stringa_pod):pos+24]
+    return pod
 
 
 filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
@@ -22,10 +32,10 @@ if(pdf_read_start.getNumPages() > 0):
     pageObj = pdf_read_start.getPage(0)
     page0=pageObj.extractText()
 
-print('Lunghezza stringa pagina:\n',len(page0))
-print('Pagina')
-print(page0)
-__getFornitura(page0)
+
+print('Dalla pagina numero: ',pdf_read_start.getPageNumber(pdf_read_start.getPage(0))+1)
+print('Fornitura: ',__getFornitura(page0))
+print('POD: ',__getPod(page0))
 
 
 pdf_read.close()

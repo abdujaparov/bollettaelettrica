@@ -17,8 +17,17 @@ def __getPod(fp):
     pod=fp[pos+len(stringa_pod):pos+24]
     return pod
 
+def __getPeriodo(fp):
+    periodo=''
+    stringa_periodo='PERIODO'
+    stringa_fattura='Fattura'
+    posPeriodo=fp.find(stringa_periodo)
+    posFattura=fp.find(stringa_fattura)
+    periodo=fp[posPeriodo+len(stringa_periodo):posFattura]
+    return periodo
 
-filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
+#filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
+filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
 
 if pathlib.Path(filename).is_file() == False:    
     print('File non valido')
@@ -36,6 +45,7 @@ if(pdf_read_start.getNumPages() > 0):
 print('Dalla pagina numero: ',pdf_read_start.getPageNumber(pdf_read_start.getPage(0))+1)
 print('Fornitura: ',__getFornitura(page0))
 print('POD: ',__getPod(page0))
+print('Periodo: ',__getPeriodo(page0))
 
 
 pdf_read.close()

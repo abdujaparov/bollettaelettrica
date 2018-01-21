@@ -1,6 +1,7 @@
 import PyPDF2
 import pathlib
 import string
+import re
 
 
 def __getFornitura(fp):
@@ -26,6 +27,26 @@ def __getPeriodo(fp):
     periodo=fp[posPeriodo+len(stringa_periodo):posFattura]
     return periodo
 
+def __getConsumoAnnuo(fp,fascia):
+    regExpString = r"Consumo dal [0-9]{2}/[0-9]{2}/[0-9]{4} al [0-9]{2}/[0-9]{2}/[0-9]{4}.*non distinto perfasce.*COSTO"
+
+    subFp = fp[fp.find('Consumo dal'):len(fp)]    
+    matched = re.match(regExpString,subFp)
+    posFinale = matched.end()
+    tuttiDati = matched.group()
+
+    value = ''
+
+    if fascia != 'ALL':
+        temp = tuttiDati[tuttiDati.find(fascia):len(tuttiDati)]
+        value = temp[len(fascia):temp.find('Consumo')]
+    else:
+        temp = tuttiDati[tuttiDati.find('perfasce'):len(tuttiDati)]
+        value = temp[len('perfasce'):temp.find('COSTO')]
+
+    
+    return value
+
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
 filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
 
@@ -46,7 +67,7 @@ print('Dalla pagina numero: ',pdf_read_start.getPageNumber(pdf_read_start.getPag
 print('Fornitura: ',__getFornitura(page0))
 print('POD: ',__getPod(page0))
 print('Periodo: ',__getPeriodo(page0))
-
+print('Consumo: ',__getConsumoAnnuo(page0,'F1'))
 
 pdf_read.close()
 

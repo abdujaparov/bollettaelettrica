@@ -2,6 +2,7 @@ import PyPDF2
 import pathlib
 import string
 import re
+from bolletta import BollettaIren
 
 
 def __getFornitura(fp):
@@ -39,13 +40,13 @@ def __getConsumoAnnuo(fp,fascia):
 
     if fascia != 'ALL':
         temp = tuttiDati[tuttiDati.find(fascia):len(tuttiDati)]
-        value = temp[len(fascia):temp.find('Consumo')]
+        value = temp[len(fascia):temp.find('Consumo')] 
     else:
         temp = tuttiDati[tuttiDati.find('perfasce'):len(tuttiDati)]
         value = temp[len('perfasce'):temp.find('COSTO')]
 
     
-    return value
+    return float(value.split()[0])
 
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
 filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
@@ -67,7 +68,7 @@ print('Dalla pagina numero: ',pdf_read_start.getPageNumber(pdf_read_start.getPag
 print('Fornitura: ',__getFornitura(page0))
 print('POD: ',__getPod(page0))
 print('Periodo: ',__getPeriodo(page0))
-print('Consumo: ',__getConsumoAnnuo(page0,'F1'))
+print('Consumo: ',__getConsumoAnnuo(page0,'F3'))
 
 pdf_read.close()
 

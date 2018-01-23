@@ -1,2 +1,5 @@
 # bollettaelettrica
-Progetto per calcolare le statistiche sul costo della bolletta
+Estrarre dati dal pdf della bolletta elettrica
+
+Bollete:
+IREN

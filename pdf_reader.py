@@ -2,7 +2,7 @@ import PyPDF2
 import pathlib
 import string
 import re
-from bolletta import BollettaIren
+from bolletta import BollettaLuceIren
 
 
 def __getFornitura(fp):
@@ -65,10 +65,11 @@ if(pdf_read_start.getNumPages() > 0):
 
 
 print('Dalla pagina numero: ',pdf_read_start.getPageNumber(pdf_read_start.getPage(0))+1)
-bolletta=BollettaIren(__getPod(page0),__getFornitura(page0))
+bolletta=BollettaLuceIren(__getPod(page0),__getFornitura(page0))
 bolletta.consumiFasce['F1']=__getConsumoAnnuo(page0,'F1')
 bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
+print(bolletta.tipo)
 print(bolletta.gestore)
 print(bolletta.consumoTotale())
 

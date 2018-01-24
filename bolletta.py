@@ -1,10 +1,17 @@
 class Bolletta:
-    def __init__(self,codicePod='',codiceFornitura=''):
-        self.codicePod=codicePod
+    def __init__(self,codiceFornitura=''):
         self.codiceFornitura=codiceFornitura
 
 
-class BollettaIren(Bolletta):
+class BollettaLuce(Bolletta):
+
+    tipo = 'Luce'
+    
+    def __init__(self,codicePod='',codiceFornitura=''):
+        super().__init__(codiceFornitura)
+        self.codicePod=codicePod
+
+class BollettaLuceIren(BollettaLuce):
 
     gestore='IREN'
 

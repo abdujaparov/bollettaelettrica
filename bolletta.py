@@ -31,7 +31,7 @@ class BollettaLuceIren(BollettaLuce):
 
     def consumoTotale(self):
         self.conTot=0
-        for key,value in self.consumiFasce.items():
+        for value in self.consumiFasce.values():
             self.conTot += value
         return self.conTot
 

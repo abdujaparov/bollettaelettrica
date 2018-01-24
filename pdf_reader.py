@@ -84,7 +84,7 @@ bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
 #print(bolletta.tipo)
 #print(bolletta.gestore)
-#print(bolletta.consumoTotale())
+print(bolletta.consumoTotale())
 print(bolletta.costoTotale)
 
 testArr = [1,2,3,4]

@@ -13,6 +13,14 @@ class BollettaLuce(Bolletta):
         super().__init__(codiceFattura,codiceFornitura,costoTotale)
         self.codicePod=codicePod
 
+
+class BollettaGas(Bolletta):
+    tipo = 'Gas'
+    def __init__(self, codiceFattura='', codicePdr='',codiceFornitura='',costoTotale=0):
+        super().__init__(codiceFattura,codiceFornitura,costoTotale)
+        self.codicePdr=codicePdr
+        
+
 class BollettaLuceIren(BollettaLuce):
 
     gestore='IREN'

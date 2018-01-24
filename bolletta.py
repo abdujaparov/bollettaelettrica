@@ -1,22 +1,24 @@
 class Bolletta:
-    def __init__(self,codiceFornitura=''):
+    def __init__(self,codiceFattura='',codiceFornitura='',costoTotale=0):
         self.codiceFornitura=codiceFornitura
+        self.codiceFattura=codiceFattura
+        self.costoTotale=costoTotale
 
 
 class BollettaLuce(Bolletta):
 
     tipo = 'Luce'
     
-    def __init__(self,codicePod='',codiceFornitura=''):
-        super().__init__(codiceFornitura)
+    def __init__(self,codiceFattura='',codicePod='',codiceFornitura='',costoTotale=0):
+        super().__init__(codiceFattura,codiceFornitura,costoTotale)
         self.codicePod=codicePod
 
 class BollettaLuceIren(BollettaLuce):
 
     gestore='IREN'
 
-    def __init__(self,codicePod='',codiceFornitura=''):
-        super().__init__(codicePod,codiceFornitura)
+    def __init__(self,codiceFattura='',codicePod='',codiceFornitura='',costoTotale=0):
+        super().__init__(codiceFattura,codicePod,codiceFornitura,costoTotale)
         self.consumiFasce={'F1': 0.0, 'F2': 0.0, 'F3': 0.0}
 
     def consumoTotale(self):

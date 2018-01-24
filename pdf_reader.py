@@ -48,6 +48,19 @@ def __getConsumoAnnuo(fp,fascia):
     
     return float(value.split()[0])
 
+def __getFattura(fp):
+    stringaFattura = 'Fattura n.'
+    subFp=fp[fp.find(stringaFattura):len(fp)]
+    posDel=subFp.find('del')
+    return [subFp[len(stringaFattura):posDel],subFp[subFp.find('del')+len('del')+1:subFp.find('Per')]]
+
+def __getCostoTotale(fp):
+    totaleDaPagareStr='Totale da pagare Euro'
+    scadenzaStr='Scadenza'
+    subFp=fp[fp.find(totaleDaPagareStr)+len(totaleDaPagareStr):len(fp)]
+    return float(subFp[0:subFp.find(scadenzaStr)].replace(',','.'))
+
+
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
 filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
 
@@ -65,13 +78,20 @@ if(pdf_read_start.getNumPages() > 0):
 
 
 print('Dalla pagina numero: ',pdf_read_start.getPageNumber(pdf_read_start.getPage(0))+1)
-bolletta=BollettaLuceIren(__getPod(page0),__getFornitura(page0))
+bolletta=BollettaLuceIren(__getFattura(page0)[0],__getPod(page0),__getFornitura(page0),__getCostoTotale(page0))
 bolletta.consumiFasce['F1']=__getConsumoAnnuo(page0,'F1')
 bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
-print(bolletta.tipo)
-print(bolletta.gestore)
-print(bolletta.consumoTotale())
+#print(bolletta.tipo)
+#print(bolletta.gestore)
+#print(bolletta.consumoTotale())
+print(bolletta.costoTotale)
+
+testArr = [1,2,3,4]
+
+
+
+
 
 pdf_read.close()
 

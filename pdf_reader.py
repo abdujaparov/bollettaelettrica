@@ -69,7 +69,7 @@ bolletta=BollettaIren(__getPod(page0),__getFornitura(page0))
 bolletta.consumiFasce['F1']=__getConsumoAnnuo(page0,'F1')
 bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
-print(bolletta.consumiFasce)
+print(bolletta.gestore)
 print(bolletta.consumoTotale())
 
 pdf_read.close()

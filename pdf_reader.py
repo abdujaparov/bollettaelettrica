@@ -60,6 +60,14 @@ def __getCostoTotale(fp):
     subFp=fp[fp.find(totaleDaPagareStr)+len(totaleDaPagareStr):len(fp)]
     return float(subFp[0:subFp.find(scadenzaStr)].replace(',','.'))
 
+def __getCostoMedioUnitario(fp):
+    costoMedioUnitarioStr='Costo medio unitario bolletta'
+    costoMedioUnitarioMatEnerStr = 'Costo medio unitario spesa materia energia'
+    costoMedioUnitario = fp[fp.find(costoMedioUnitarioStr)+len(costoMedioUnitarioStr):fp.find(costoMedioUnitarioMatEnerStr)].replace(',','.')
+    subFp = fp[fp.find(costoMedioUnitarioMatEnerStr)+len(costoMedioUnitarioMatEnerStr):len(fp)]
+    costoMedioUnitarioMatEner = subFp[0:subFp.find('Ulteriori')].replace(',','.')
+    return {costoMedioUnitarioStr:float(costoMedioUnitario),costoMedioUnitarioMatEnerStr:costoMedioUnitarioMatEner}
+
 
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
@@ -74,23 +82,27 @@ pdf_read = open (filename,'rb')
 pdf_read_start = PyPDF2.PdfFileReader(pdf_read)
 
 page0=''
+page1=''
 
 if(pdf_read_start.getNumPages() > 0):
     pageObj = pdf_read_start.getPage(0)
     page0=pageObj.extractText()
+    pageObj1 = pdf_read_start.getPage(1)
+    page1=pageObj1.extractText()
 
 
-print('Dalla pagina numero: ',pdf_read_start.getPageNumber(pdf_read_start.getPage(0))+1)
+
 bolletta=BollettaLuceIren(__getFattura(page0)[0],__getPod(page0),__getFornitura(page0),__getCostoTotale(page0))
 bolletta.consumiFasce['F1']=__getConsumoAnnuo(page0,'F1')
 bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
+bolletta.consumiFasce['TOT']=__getConsumoAnnuo(page0,'ALL')
 #print(bolletta.tipo)
 #print(bolletta.gestore)
-print(bolletta.consumoTotale())
-print(bolletta.costoTotale)
+print(page1)
 
-testArr = [1,2,3,4]
+
+
 
 
 

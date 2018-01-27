@@ -62,7 +62,10 @@ def __getCostoTotale(fp):
 
 
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
-filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
+#filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
+
+#filename = 'D:\Utenti\Angelo\Documenti\bollettaelettrica\TO_20171121454642.pdf'
+filename ='D:\\bollettaelettrica\\pippo.pdf'
 
 if pathlib.Path(filename).is_file() == False:    
     print('File non valido')

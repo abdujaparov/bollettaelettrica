@@ -73,7 +73,8 @@ def __getCostoMedioUnitario(fp):
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
 
 #filename = 'D:\Utenti\Angelo\Documenti\bollettaelettrica\TO_20171121454642.pdf'
-filename ='D:\\bollettaelettrica\\pippo.pdf'
+#filename ='D:\\bollettaelettrica\\pippo.pdf'
+filename = '/media/angelo/DATA/bollettaelettrica/pippo.pdf'
 
 if pathlib.Path(filename).is_file() == False:    
     print('File non valido')
@@ -98,7 +99,7 @@ bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
 bolletta.consumiFasce['TOT']=__getConsumoAnnuo(page0,'ALL')
 #print(bolletta.tipo)
-#print(bolletta.gestore)
+print(bolletta.gestore)
 print(page1)
 
 

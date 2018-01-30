@@ -1,6 +1,5 @@
 import PyPDF2
 import pathlib
-import string
 import re
 from bolletta import BollettaLuceIren
 
@@ -33,7 +32,7 @@ def __getConsumoAnnuo(fp,fascia):
 
     subFp = fp[fp.find('Consumo dal'):len(fp)]    
     matched = re.match(regExpString,subFp)
-    posFinale = matched.end()
+#    posFinale = matched.end()
     tuttiDati = matched.group()
 
     value = ''
@@ -44,7 +43,6 @@ def __getConsumoAnnuo(fp,fascia):
     else:
         temp = tuttiDati[tuttiDati.find('perfasce'):len(tuttiDati)]
         value = temp[len('perfasce'):temp.find('COSTO')]
-
     
     return float(value.split()[0])
 
@@ -67,6 +65,47 @@ def __getCostoMedioUnitario(fp):
     subFp = fp[fp.find(costoMedioUnitarioMatEnerStr)+len(costoMedioUnitarioMatEnerStr):len(fp)]
     costoMedioUnitarioMatEner = subFp[0:subFp.find('Ulteriori')].replace(',','.')
     return {costoMedioUnitarioStr:float(costoMedioUnitario),costoMedioUnitarioMatEnerStr:costoMedioUnitarioMatEner}
+
+def __getDettaglioCosti(fp):
+    dettaglioCosti = {}
+    
+    spesaMateriaEnergiaStr= "Spesa per la materia energia"
+    costoRegExp = "[0-9]+,[0-9]+"
+    #spesaMateriaEnergiaRegExp = "Spesa per la materia energia[0-9]+,[0-9]+"
+    spesaMateriaEnergiaRegExp = spesaMateriaEnergiaStr + costoRegExp
+    
+    spesaTrasportoGestioneContatoreStr= "Spesa per il trasporto e la gestione del contatore"
+    spesaTrasportoGestioneContatoreRegExp = spesaTrasportoGestioneContatoreStr + costoRegExp
+    
+    totaleDaPagareEuroStr = "Totale da pagare Euro"
+    totaleDaPagareEuroRegExp = totaleDaPagareEuroStr + costoRegExp
+    
+    speseOneriSistemaStr = 'Spesa per oneri di sistema'
+    speseOneriSistemaRegExp = speseOneriSistemaStr + costoRegExp
+    
+    imposteStr = 'Imposte'
+    altroSoggettoIvaStr = 'Altre partite soggette iva'
+    totaleImponibileStr = 'Totale imponibile'
+    iva10Str = 'Iva 10%'
+    arrotondamentiStr = 'Arrotondamenti'
+    totaleBollettaStr = 'Totale bolletta'
+    #subFp = fp[fp.find(spesaMateriaEnergiaStr):fp.find(fp.find('Totale da pagare Euro')]
+    subFp = fp[fp.find(spesaMateriaEnergiaStr):
+               fp.find(totaleDaPagareEuroStr)]                                               
+   
+    
+    matched = re.search(spesaMateriaEnergiaRegExp, subFp)
+    spesaMateriaEnergia=float(matched.group().replace(spesaMateriaEnergiaStr,'').replace(',','.'))
+    dettaglioCosti[spesaMateriaEnergiaStr]=spesaMateriaEnergia
+    print(subFp)
+    
+    matched = re.search(spesaTrasportoGestioneContatoreRegExp, subFp)
+    spesaTrasportoGestioneContatore=float(matched.group().replace(spesaTrasportoGestioneContatoreStr,'').replace(',','.'))
+    dettaglioCosti[spesaTrasportoGestioneContatoreStr]=spesaTrasportoGestioneContatore
+    
+    return dettaglioCosti
+    
+    
 
 
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
@@ -99,8 +138,9 @@ bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
 bolletta.consumiFasce['TOT']=__getConsumoAnnuo(page0,'ALL')
 #print(bolletta.tipo)
-print(bolletta.gestore)
-print(page1)
+#print(bolletta.gestore)
+#print(page0)
+print(__getDettaglioCosti(page0))
 
 
 

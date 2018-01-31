@@ -5,18 +5,23 @@ from bolletta import BollettaLuceIren
 
 
 def __getFornitura(fp):
-    fornitura=''
+    
     stringa_fornitura = 'Contratto Numero'
-    pos=fp.find(stringa_fornitura)
-    fornitura=fp[pos+len(stringa_fornitura):pos+24]
-    return fornitura
+    fornituraRegExp = stringa_fornitura+"[0-9]+"
+    
+    matched = re.search(fornituraRegExp, fp)
+    return matched.group().replace(stringa_fornitura,'')
+    
+
 
 def __getPod(fp):
-    pod=''
+
     stringa_pod='Codice POD'
-    pos=fp.find(stringa_pod)
-    pod=fp[pos+len(stringa_pod):pos+24]
-    return pod
+    
+    podRegExp = stringa_pod+"[A-Z0-9]{14}"
+    matched = re.search(podRegExp, fp)
+
+    return matched.group().replace(stringa_pod,'')
 
 def __getPeriodo(fp):
     periodo=''
@@ -25,6 +30,7 @@ def __getPeriodo(fp):
     posPeriodo=fp.find(stringa_periodo)
     posFattura=fp.find(stringa_fattura)
     periodo=fp[posPeriodo+len(stringa_periodo):posFattura]
+    
     return periodo
 
 def __getConsumoAnnuo(fp,fascia):
@@ -54,9 +60,12 @@ def __getFattura(fp):
 
 def __getCostoTotale(fp):
     totaleDaPagareStr='Totale da pagare Euro'
-    scadenzaStr='Scadenza'
-    subFp=fp[fp.find(totaleDaPagareStr)+len(totaleDaPagareStr):len(fp)]
-    return float(subFp[0:subFp.find(scadenzaStr)].replace(',','.'))
+    
+    totaleDaPagareRegExp = totaleDaPagareStr+"[0-9]+,[0-9]+"
+    matched = re.search(totaleDaPagareRegExp,fp)
+    
+    return float(matched.group().replace(totaleDaPagareStr,'').replace(',','.'))
+     
 
 def __getCostoMedioUnitario(fp):
     costoMedioUnitarioStr='Costo medio unitario bolletta'
@@ -76,9 +85,6 @@ def __getDettaglioCosti(fp):
     
     spesaTrasportoGestioneContatoreStr= "Spesa per il trasporto e la gestione del contatore"
     spesaTrasportoGestioneContatoreRegExp = spesaTrasportoGestioneContatoreStr + costoRegExp
-    
-    totaleDaPagareEuroStr = "Totale da pagare Euro"
-    #totaleDaPagareEuroRegExp = totaleDaPagareEuroStr + costoRegExp
     
     speseOneriSistemaStr = 'Spesa per oneri di sistema'
     speseOneriSistemaRegExp = speseOneriSistemaStr + costoRegExp
@@ -139,17 +145,26 @@ def __getDettaglioCosti(fp):
     totaleBolletta = float(matched.group().replace(totaleBollettaStr,'').replace(',','.') if matched != None else 0.0)
     dettaglioCosti[totaleBollettaStr] = totaleBolletta
     
-    
     return dettaglioCosti
     
-    
+def __getTipologiaCliente(fp):
+    tipologiaClienteStr = "Tipologia Cliente"
+    tipologiaClienteRegExp = tipologiaClienteStr +"[A-Z]{1}[ a-z]+"
+    matched = re.search(tipologiaClienteRegExp,fp)
+    return matched.group().replace(tipologiaClienteStr,'')
+
+def __getPotenzaDisponibileKw(fp):
+    potenzaDisponibileStr = "Potenza disponibile"
+    potenzaDisponibileRegExp = potenzaDisponibileStr + "[0-9]+,?[0-9]*"
+    matched = re.search(potenzaDisponibileRegExp,fp)
+    return float(matched.group().replace(potenzaDisponibileStr,'').replace(',','.'))
 
 
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
-filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
+ #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
 
 #filename = 'D:\Utenti\Angelo\Documenti\bollettaelettrica\TO_20171121454642.pdf'
-#filename ='D:\\bollettaelettrica\\pippo.pdf'
+filename ='D:\\bollettaelettrica\\pippo.pdf'
 #filename = '/media/angelo/DATA/bollettaelettrica/pippo.pdf'
 
 if pathlib.Path(filename).is_file() == False:    
@@ -167,17 +182,16 @@ if(pdf_read_start.getNumPages() > 0):
     pageObj1 = pdf_read_start.getPage(1)
     page1=pageObj1.extractText()
 
-
+pdf_read.close()
 
 bolletta=BollettaLuceIren(__getFattura(page0)[0],__getPod(page0),__getFornitura(page0),__getCostoTotale(page0))
 bolletta.consumiFasce['F1']=__getConsumoAnnuo(page0,'F1')
 bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
 bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
 bolletta.consumiFasce['TOT']=__getConsumoAnnuo(page0,'ALL')
-#print(bolletta.tipo)
+
 #print(bolletta.gestore)
-#print(page0)
-print(__getDettaglioCosti(page0))
+print(__getPotenzaDisponibileKw(page0))
 
 
 
@@ -185,8 +199,6 @@ print(__getDettaglioCosti(page0))
 
 
 
-
-pdf_read.close()
 
 
 

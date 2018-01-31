@@ -78,30 +78,67 @@ def __getDettaglioCosti(fp):
     spesaTrasportoGestioneContatoreRegExp = spesaTrasportoGestioneContatoreStr + costoRegExp
     
     totaleDaPagareEuroStr = "Totale da pagare Euro"
-    totaleDaPagareEuroRegExp = totaleDaPagareEuroStr + costoRegExp
+    #totaleDaPagareEuroRegExp = totaleDaPagareEuroStr + costoRegExp
     
     speseOneriSistemaStr = 'Spesa per oneri di sistema'
     speseOneriSistemaRegExp = speseOneriSistemaStr + costoRegExp
     
     imposteStr = 'Imposte'
+    imposteRegExp = imposteStr + costoRegExp
+
     altroSoggettoIvaStr = 'Altre partite soggette iva'
+    altroSoggettoIvaRegExp = altroSoggettoIvaStr + costoRegExp
+
     totaleImponibileStr = 'Totale imponibile'
+    totaleImponibileRegExp = totaleImponibileStr + costoRegExp
+
     iva10Str = 'Iva 10%'
+    iva10RegExp = iva10Str + costoRegExp
+
     arrotondamentiStr = 'Arrotondamenti'
+    arrotondamentiRegExp = arrotondamentiStr + costoRegExp
+
     totaleBollettaStr = 'Totale bolletta'
-    #subFp = fp[fp.find(spesaMateriaEnergiaStr):fp.find(fp.find('Totale da pagare Euro')]
-    subFp = fp[fp.find(spesaMateriaEnergiaStr):
-               fp.find(totaleDaPagareEuroStr)]                                               
+    totaleBollettaRegExp = totaleBollettaStr + costoRegExp
    
     
-    matched = re.search(spesaMateriaEnergiaRegExp, subFp)
-    spesaMateriaEnergia=float(matched.group().replace(spesaMateriaEnergiaStr,'').replace(',','.'))
+    matched = re.search(spesaMateriaEnergiaRegExp, fp)
+    spesaMateriaEnergia=float(matched.group().replace(spesaMateriaEnergiaStr,'').replace(',','.') if matched != None else 0.0)
     dettaglioCosti[spesaMateriaEnergiaStr]=spesaMateriaEnergia
-    print(subFp)
     
-    matched = re.search(spesaTrasportoGestioneContatoreRegExp, subFp)
-    spesaTrasportoGestioneContatore=float(matched.group().replace(spesaTrasportoGestioneContatoreStr,'').replace(',','.'))
+    
+    matched = re.search(spesaTrasportoGestioneContatoreRegExp, fp)
+    spesaTrasportoGestioneContatore=float(matched.group().replace(spesaTrasportoGestioneContatoreStr,'').replace(',','.') if matched != None else 0.0)
     dettaglioCosti[spesaTrasportoGestioneContatoreStr]=spesaTrasportoGestioneContatore
+
+    matched = re.search(speseOneriSistemaRegExp,fp)
+    speseOneriSistema=float(matched.group().replace(speseOneriSistemaStr,'').replace(',','.') if matched != None else 0.0)
+    dettaglioCosti[speseOneriSistemaStr]=speseOneriSistema
+
+    matched = re.search(imposteRegExp,fp)
+    imposte=float(matched.group().replace(imposteStr,'').replace(',','.') if matched != None else 0.0)
+    dettaglioCosti[imposteStr]=imposte
+
+    matched = re.search(altroSoggettoIvaRegExp,fp)
+    altroSoggettoIva = float(matched.group().replace(altroSoggettoIvaStr,'').replace(',','.') if matched != None else 0.0)
+    dettaglioCosti[altroSoggettoIvaStr]=altroSoggettoIva
+
+    matched = re.search(totaleImponibileRegExp,fp)
+    totaleImponibile = float(matched.group().replace(totaleImponibileStr,'').replace(',','.') if matched != None else 0.0)
+    dettaglioCosti[totaleImponibileStr] = totaleImponibile
+
+    matched = re.search(iva10RegExp,fp)
+    iva10 = float(matched.group().replace(iva10Str,'').replace(',','.') if matched != None else 0.0)
+    dettaglioCosti[iva10Str]=iva10
+
+    matched = re.search(arrotondamentiRegExp,fp)
+    arrotondamenti = float(matched.group().replace(arrotondamentiStr,'').replace(',','.') if matched != None else 0.0)
+    dettaglioCosti[arrotondamentiStr]=arrotondamenti
+
+    matched = re.search(totaleBollettaRegExp,fp)
+    totaleBolletta = float(matched.group().replace(totaleBollettaStr,'').replace(',','.') if matched != None else 0.0)
+    dettaglioCosti[totaleBollettaStr] = totaleBolletta
+    
     
     return dettaglioCosti
     
@@ -109,11 +146,11 @@ def __getDettaglioCosti(fp):
 
 
 #filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1515244_es.pdf'
-#filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
+filename = 'C:\projectPython\data\eletrica\iren\Fattura Iren 1374175_es.pdf'
 
 #filename = 'D:\Utenti\Angelo\Documenti\bollettaelettrica\TO_20171121454642.pdf'
 #filename ='D:\\bollettaelettrica\\pippo.pdf'
-filename = '/media/angelo/DATA/bollettaelettrica/pippo.pdf'
+#filename = '/media/angelo/DATA/bollettaelettrica/pippo.pdf'
 
 if pathlib.Path(filename).is_file() == False:    
     print('File non valido')

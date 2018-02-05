@@ -29,11 +29,13 @@ class BollettaIrenParser:
         self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('F2')
         self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('F3')
         self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('ALL')
+        self.bolletta.tipologiaCliente=self.__getTipologiaCliente()
+        self.bolletta.potenzaDisponibile=self.__getPotenzaDisponibileKw()
          
     
     def __getFornitura(self):
         
-        stringa_fornitura = 'Contratto Numero'
+        stringa_fornitura = "Contratto Numero"
         fornituraRegExp = stringa_fornitura+"[0-9]+"
         
         matched = re.search(fornituraRegExp, self.page0)
@@ -42,7 +44,7 @@ class BollettaIrenParser:
 
     def __getPod(self):
     
-        stringa_pod='Codice POD'
+        stringa_pod="Codice POD"
         
         podRegExp = stringa_pod+"[A-Z0-9]{14}"
         matched = re.search(podRegExp, self.page0)

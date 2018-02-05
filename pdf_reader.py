@@ -92,15 +92,15 @@ class BollettaIrenParser:
         return float(matched.group().replace(totaleDaPagareStr,'').replace(',','.'))
      
 
-    def __getCostoMedioUnitario(self,fp):
+    def __getCostoMedioUnitario(self):
         costoMedioUnitarioStr='Costo medio unitario bolletta'
         costoMedioUnitarioMatEnerStr = 'Costo medio unitario spesa materia energia'
-        costoMedioUnitario = fp[fp.find(costoMedioUnitarioStr)+len(costoMedioUnitarioStr):fp.find(costoMedioUnitarioMatEnerStr)].replace(',','.')
-        subFp = fp[fp.find(costoMedioUnitarioMatEnerStr)+len(costoMedioUnitarioMatEnerStr):len(fp)]
+        costoMedioUnitario = self.page0[self.page0.find(costoMedioUnitarioStr)+len(costoMedioUnitarioStr):self.page0.find(costoMedioUnitarioMatEnerStr)].replace(',','.')
+        subFp = self.page0[self.page0.find(costoMedioUnitarioMatEnerStr)+len(costoMedioUnitarioMatEnerStr):len(self.page0)]
         costoMedioUnitarioMatEner = subFp[0:subFp.find('Ulteriori')].replace(',','.')
         return {costoMedioUnitarioStr:float(costoMedioUnitario),costoMedioUnitarioMatEnerStr:costoMedioUnitarioMatEner}
 
-    def __getDettaglioCosti(self,fp):
+    def __getDettaglioCosti(self):
         dettaglioCosti = {}
         
         spesaMateriaEnergiaStr= "Spesa per la materia energia"
@@ -133,75 +133,61 @@ class BollettaIrenParser:
         totaleBollettaRegExp = totaleBollettaStr + costoRegExp
        
         
-        matched = re.search(spesaMateriaEnergiaRegExp, fp)
+        matched = re.search(spesaMateriaEnergiaRegExp, self.page0)
         spesaMateriaEnergia=float(matched.group().replace(spesaMateriaEnergiaStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[spesaMateriaEnergiaStr]=spesaMateriaEnergia
         
         
-        matched = re.search(spesaTrasportoGestioneContatoreRegExp, fp)
+        matched = re.search(spesaTrasportoGestioneContatoreRegExp, self.page0)
         spesaTrasportoGestioneContatore=float(matched.group().replace(spesaTrasportoGestioneContatoreStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[spesaTrasportoGestioneContatoreStr]=spesaTrasportoGestioneContatore
     
-        matched = re.search(speseOneriSistemaRegExp,fp)
+        matched = re.search(speseOneriSistemaRegExp,self.page0)
         speseOneriSistema=float(matched.group().replace(speseOneriSistemaStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[speseOneriSistemaStr]=speseOneriSistema
     
-        matched = re.search(imposteRegExp,fp)
+        matched = re.search(imposteRegExp,self.page0)
         imposte=float(matched.group().replace(imposteStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[imposteStr]=imposte
     
-        matched = re.search(altroSoggettoIvaRegExp,fp)
+        matched = re.search(altroSoggettoIvaRegExp,self.page0)
         altroSoggettoIva = float(matched.group().replace(altroSoggettoIvaStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[altroSoggettoIvaStr]=altroSoggettoIva
     
-        matched = re.search(totaleImponibileRegExp,fp)
+        matched = re.search(totaleImponibileRegExp,self.page0)
         totaleImponibile = float(matched.group().replace(totaleImponibileStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[totaleImponibileStr] = totaleImponibile
     
-        matched = re.search(iva10RegExp,fp)
+        matched = re.search(iva10RegExp,self.page0)
         iva10 = float(matched.group().replace(iva10Str,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[iva10Str]=iva10
     
-        matched = re.search(arrotondamentiRegExp,fp)
+        matched = re.search(arrotondamentiRegExp,self.page0)
         arrotondamenti = float(matched.group().replace(arrotondamentiStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[arrotondamentiStr]=arrotondamenti
     
-        matched = re.search(totaleBollettaRegExp,fp)
+        matched = re.search(totaleBollettaRegExp,self.page0)
         totaleBolletta = float(matched.group().replace(totaleBollettaStr,'').replace(',','.') if matched != None else 0.0)
         dettaglioCosti[totaleBollettaStr] = totaleBolletta
         
         return dettaglioCosti
     
-    def __getTipologiaCliente(self,fp):
+    def __getTipologiaCliente(self):
         tipologiaClienteStr = "Tipologia Cliente"
         tipologiaClienteRegExp = tipologiaClienteStr +"[A-Z]{1}[ a-z]+"
-        matched = re.search(tipologiaClienteRegExp,fp)
+        matched = re.search(tipologiaClienteRegExp,self.page0)
         return matched.group().replace(tipologiaClienteStr,'')
 
-    def __getPotenzaDisponibileKw(self,fp):
+    def __getPotenzaDisponibileKw(self):
         potenzaDisponibileStr = "Potenza disponibile"
         potenzaDisponibileRegExp = potenzaDisponibileStr + "[0-9]+,?[0-9]*"
-        matched = re.search(potenzaDisponibileRegExp,fp)
+        matched = re.search(potenzaDisponibileRegExp,self.page0)
         return float(matched.group().replace(potenzaDisponibileStr,'').replace(',','.'))
 
 
 
 
 
-
-page0=''
-page1=''
-
-
-
-
-bolletta=BollettaLuceIren(__getFattura(page0)[0],__getPod(page0),__getFornitura(page0),__getCostoTotale(page0))
-bolletta.consumiFasce['F1']=__getConsumoAnnuo(page0,'F1')
-bolletta.consumiFasce['F2']=__getConsumoAnnuo(page0,'F2')
-bolletta.consumiFasce['F3']=__getConsumoAnnuo(page0,'F3')
-bolletta.consumiFasce['TOT']=__getConsumoAnnuo(page0,'ALL')
-
-#print(bolletta.gestore)
 
 
 

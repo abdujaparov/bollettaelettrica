@@ -1,5 +1,6 @@
 import pathlib
-from pdf_reader import BollettaIrenParser 
+from pdf_reader import BollettaIrenParser
+from dataStore.JSONFileStore import JSONFileStore
 
 if __name__ == "__main__":
     print("Start")
@@ -12,5 +13,5 @@ if __name__ == "__main__":
     parser = BollettaIrenParser(filename)
     
     bolletta = parser.parse()
-    print(bolletta)    
-    
+    jsonStore = JSONFileStore('/home/angelo/bolletta.json')
+    jsonStore.store(bolletta,'a')

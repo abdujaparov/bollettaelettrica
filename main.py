@@ -6,5 +6,11 @@ if __name__ == "__main__":
     filename = '/media/angelo/DATA/bollettaelettrica/pippo.pdf'
     
     if pathlib.Path(filename).is_file() == False:
-        print('File non valido')        
+        print('File non valido')
+        exit
+        
+    parser = BollettaIrenParser(filename)
+    
+    bolletta = parser.parse()
+    print(bolletta)    
     

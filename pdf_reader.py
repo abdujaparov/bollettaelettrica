@@ -23,14 +23,16 @@ class BollettaIrenParser:
      
     def parse(self):
         self.bolletta.codiceFornitura=self.__getFornitura()
-        self.bolletta.codicePod= self._getPod()
+        self.bolletta.codiceFattura=self.__getFattura()
+        self.bolletta.codicePod= self.__getPod()
         self.costoTotale=self.__getCostoTotale()
         self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('F1')
-        self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('F2')
-        self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('F3')
-        self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('ALL')
+        self.bolletta.consumiFasce['F2']=self.__getConsumoAnnuo('F2')
+        self.bolletta.consumiFasce['F3']=self.__getConsumoAnnuo('F3')
+        self.bolletta.consumiFasce['TOT']=self.__getConsumoAnnuo('ALL')
         self.bolletta.tipologiaCliente=self.__getTipologiaCliente()
         self.bolletta.potenzaDisponibile=self.__getPotenzaDisponibileKw()
+        return self.bolletta
          
     
     def __getFornitura(self):
@@ -79,9 +81,9 @@ class BollettaIrenParser:
         
         return float(value.split()[0])
 
-    def __getFattura(self,fp):
+    def __getFattura(self):
         stringaFattura = 'Fattura n.'
-        subFp=fp[fp.find(stringaFattura):len(fp)]
+        subFp=self.page0[self.page0.find(stringaFattura):len(self.page0)]
         posDel=subFp.find('del')
         return [subFp[len(stringaFattura):posDel],subFp[subFp.find('del')+len('del')+1:subFp.find('Per')]]
     
@@ -186,18 +188,5 @@ class BollettaIrenParser:
         matched = re.search(potenzaDisponibileRegExp,self.page0)
         return float(matched.group().replace(potenzaDisponibileStr,'').replace(',','.'))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 

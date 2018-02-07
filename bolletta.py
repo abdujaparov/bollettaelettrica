@@ -30,12 +30,12 @@ class BollettaLuceIren(BollettaLuce):
     def __init__(self,codiceFattura='',codicePod='',codiceFornitura='',costoTotale=0,tipologiaCliente='',potenzaDisponibile=0.0):
         super().__init__(codiceFattura,codicePod,codiceFornitura,costoTotale,tipologiaCliente='',potenzaDisponibile=0.0)
         self.consumiFasce={'F1': 0.0, 'F2': 0.0, 'F3': 0.0, 'TOT' : 0.0}
+    
+    def __str__(self):
+        return "Bolletta: {}, gestore: {}, fattura: {}, fornitura: {}, codice POD: {}, costo: {}€, consumi {}".format(self.tipo, self.gestore, self.codiceFattura,
+                                                                                                          self.codiceFornitura, self.codicePod, self.costoTotale,
+                                                                                                          self.consumiFasce)
 
-#     def consumoTotale(self):
-#        self.conTot=0
-#        for value in self.consumiFasce.values():
-#            self.conTot += value
-#        return self.conTot
 
     
 

@@ -1,27 +1,36 @@
 import PyPDF2
 import re
-from bolletta import BollettaLuceIren
+from bolletta import BollettaLuceIren, BollettaMetadata
 
 class BollettaIrenParser:
+    
+    mesi = {'GENNAIO':1,'FEBBRAIO':2,'MARZO':3,'APRILE':4,'MAGGIO':5,'GIUGNO':6,'LUGLIO':7,'AGOSTO':8,
+            'SETTEMBRE':9,'OTTOBRE':10,'NOVEMBRE':11,'DICEMBRE':12}
     
     def __init__(self,filename):
         pdf_read = open (filename,'rb')
         pdf_read_start = PyPDF2.PdfFileReader(pdf_read)
         
         self.page0 = ''
+        tuttoTesto = ''
+        
         
         if(pdf_read_start.getNumPages() > 0):
-            pageObj = pdf_read_start.getPage(0)
-            self.page0=pageObj.extractText()
-            #pageObj1 = pdf_read_start.getPage(1)
-            #page1=pageObj1.extractText()
+            for i in range(pdf_read_start.getNumPages()):
+                pageObj = pdf_read_start.getPage(i)
+                pageText = pageObj.extractText()
+                tuttoTesto += 'Pagina {}: '.format(i)+pageText 
+                if i == 0:
+                    self.page0=pageText
+                    
         
         pdf_read.close()
         
         self.bolletta=BollettaLuceIren()
+        self.bollettaMetadata=BollettaMetadata(filename,tuttoTesto)
 
      
-    def parse(self):
+    def parseData(self):
         self.bolletta.codiceFornitura=self.__getFornitura()
         self.bolletta.codiceFattura=self.__getFattura()
         self.bolletta.codicePod= self.__getPod()
@@ -34,6 +43,14 @@ class BollettaIrenParser:
         self.bolletta.potenzaDisponibile=self.__getPotenzaDisponibileKw()
         return self.bolletta
          
+    def parseMetadata(self):
+        self.bollettaMetadata.tipo='Luce'
+        self.bollettaMetadata.gestore='IREN'
+        fattura = self.__getFattura()
+        self.bollettaMetadata.codFattura=fattura[0]
+        self.bollettaMetadata.dataFattura=fattura[1]
+        return self.bollettaMetadata
+    
     
     def __getFornitura(self):
         
@@ -85,7 +102,26 @@ class BollettaIrenParser:
         stringaFattura = 'Fattura n.'
         subFp=self.page0[self.page0.find(stringaFattura):len(self.page0)]
         posDel=subFp.find('del')
-        return [subFp[len(stringaFattura):posDel],subFp[subFp.find('del')+len('del')+1:subFp.find('Per')]]
+        dataFatturaStr = subFp[subFp.find('del')+len('del')+1:subFp.find('Per')]
+        dataList = dataFatturaStr.split()
+        data = ''
+        
+        if(len(dataList)==3):
+            for i in range(3):
+                if i!=1:
+                    data += dataList[i]
+                else:
+                    if (dataList[i] in self.mesi.keys()):
+                        data += str(self.mesi[dataList[i]])
+                    else:
+                        data += dataList[i]
+                if i != 2:
+                    data += '/'
+        else:
+            data = dataFatturaStr
+                
+            
+        return [subFp[len(stringaFattura):posDel],data]
     
     def __getCostoTotale(self):
         totaleDaPagareStr='Totale da pagare Euro'

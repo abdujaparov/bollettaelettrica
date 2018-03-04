@@ -20,7 +20,7 @@ class BollettaIrenParser:
         self.page0 = ''
         tuttoTesto = ''
 
-        logging.debug("Number of page: {}".format(pdf_read_start.getNumPages()))
+#        logging.debug("Number of page: {}".format(pdf_read_start.getNumPages()))
 
         if(pdf_read_start.getNumPages() > 0):
             for i in range(pdf_read_start.getNumPages()):
@@ -55,7 +55,8 @@ class BollettaIrenParser:
             self.bolletta.potenzaDisponibile=self.__getPotenzaDisponibileKw()
         except Exception as e:
             logging.error("File cannot be parsed: {}".format(self.filename))
-            logging.exception(e)
+#            logging.exception(e)
+            return None
 
         return self.bolletta
          

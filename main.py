@@ -3,7 +3,7 @@ from os.path import isfile, join
 import logging.config
 import yaml
 from pdf_reader import BollettaIrenParser
-
+from dataStore.ElasticSearchStore import ElasticSearchStore
 
 
 
@@ -17,9 +17,19 @@ def extract_data(pdf_list):
         data_list['data'].append(parser.parseData())
         data_list['metadata'].append(parser.parseMetadata())
 
-    logging.debug(data_list)
+    logging.debug("Data parsed: {}".format(len(data_list['data'])))
+    logging.debug("Metadata extracted: {}".format(len(data_list['metadata'])))
 
     return data_list
+
+
+def save_metadata(metadata_list):
+
+    ess = ElasticSearchStore({"host":"192.168.1.151","port":9200,"user":"elastic","pass":"elastic"})
+
+    for meta in metadata_list:
+        ess.put_metadata("bolletta","luce_iren",meta.uuid,meta)
+
 
 
 
@@ -39,6 +49,7 @@ if __name__ == "__main__":
 
     bolletta_list=extract_data(bollette_file)
 
+    save_metadata(bolletta_list["metadata"])
 
     # parser = BollettaIrenParser(filename)
     #

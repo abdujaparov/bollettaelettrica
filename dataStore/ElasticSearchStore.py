@@ -5,6 +5,7 @@ Created on 18 feb 2018
 '''
 
 import elasticsearch
+import logging.config
 
 class ElasticSearchStore(object):
     '''
@@ -18,10 +19,8 @@ class ElasticSearchStore(object):
         Constructor
         '''
         logging.debug("Params: host={} port={}".format(params["host"],params["port"]))
-        self.es=elasticsearch.Elasticsearch({'host': params["host"],'port':params["port"]})
+        self.es=elasticsearch.Elasticsearch(["http://{}:{}@{}:{}/".format(params["user"],params["pass"],params["host"],params["port"])])
 
 
-    def put_metadata(self,index_name, index_type,metadata_list):
-
-        for metadata in metadata_list:
-            print(self.es.index(index=index_name,doc_type=index_type,metadata,metadata_list[metadata_list]))
+    def put_metadata(self,index_name, index_type,id,metadata):
+        logging.info(self.es.index(index=index_name,doc_type=index_type,id=id,body=metadata.__dict__))

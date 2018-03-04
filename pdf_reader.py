@@ -1,6 +1,7 @@
 import PyPDF2
 import re
 from bolletta import BollettaLuceIren, BollettaMetadata
+import logging.config
 
 class BollettaIrenParser:
     
@@ -8,13 +9,19 @@ class BollettaIrenParser:
             'SETTEMBRE':9,'OTTOBRE':10,'NOVEMBRE':11,'DICEMBRE':12}
     
     def __init__(self,filename):
-        pdf_read = open (filename,'rb')
+
+        logging.debug("File to parse: {}".format(filename))
+
+        self.filename=filename
+
+        pdf_read = open (self.filename,'rb')
         pdf_read_start = PyPDF2.PdfFileReader(pdf_read)
         
         self.page0 = ''
         tuttoTesto = ''
-        
-        
+
+        logging.debug("Number of page: {}".format(pdf_read_start.getNumPages()))
+
         if(pdf_read_start.getNumPages() > 0):
             for i in range(pdf_read_start.getNumPages()):
                 pageObj = pdf_read_start.getPage(i)
@@ -22,25 +29,34 @@ class BollettaIrenParser:
                 tuttoTesto += 'Pagina {}: '.format(i)+pageText 
                 if i == 0:
                     self.page0=pageText
+
                     
         
         pdf_read.close()
-        
+
+        logging.debug("Page 0: {}".format(self.page0))
+
         self.bolletta=BollettaLuceIren()
-        self.bollettaMetadata=BollettaMetadata(filename,tuttoTesto)
+        self.bollettaMetadata=BollettaMetadata(self.filename,tuttoTesto)
+
 
      
     def parseData(self):
-        self.bolletta.codiceFornitura=self.__getFornitura()
-        self.bolletta.codiceFattura=self.__getFattura()
-        self.bolletta.codicePod= self.__getPod()
-        self.costoTotale=self.__getCostoTotale()
-        self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('F1')
-        self.bolletta.consumiFasce['F2']=self.__getConsumoAnnuo('F2')
-        self.bolletta.consumiFasce['F3']=self.__getConsumoAnnuo('F3')
-        self.bolletta.consumiFasce['TOT']=self.__getConsumoAnnuo('ALL')
-        self.bolletta.tipologiaCliente=self.__getTipologiaCliente()
-        self.bolletta.potenzaDisponibile=self.__getPotenzaDisponibileKw()
+        try:
+            self.bolletta.codiceFornitura=self.__getFornitura()
+            self.bolletta.codiceFattura=self.__getFattura()
+            self.bolletta.codicePod= self.__getPod()
+            self.costoTotale=self.__getCostoTotale()
+            self.bolletta.consumiFasce['F1']=self.__getConsumoAnnuo('F1')
+            self.bolletta.consumiFasce['F2']=self.__getConsumoAnnuo('F2')
+            self.bolletta.consumiFasce['F3']=self.__getConsumoAnnuo('F3')
+            self.bolletta.consumiFasce['TOT']=self.__getConsumoAnnuo('ALL')
+            self.bolletta.tipologiaCliente=self.__getTipologiaCliente()
+            self.bolletta.potenzaDisponibile=self.__getPotenzaDisponibileKw()
+        except Exception as e:
+            logging.error("File cannot be parsed: {}".format(self.filename))
+            logging.exception(e)
+
         return self.bolletta
          
     def parseMetadata(self):
@@ -58,6 +74,9 @@ class BollettaIrenParser:
         fornituraRegExp = stringa_fornitura+"[0-9]+"
         
         matched = re.search(fornituraRegExp, self.page0)
+
+        logging.debug(matched)
+
         return matched.group().replace(stringa_fornitura,'')
 
 

@@ -1,0 +1,5 @@
+cluster.name: es-test
+bootstrap.memory_lock: true
+discovery.zen.ping.unicast.hosts: es1
+node.name: es-2
+network.host: 0.0.0.0

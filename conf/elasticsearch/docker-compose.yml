@@ -1,0 +1,34 @@
+version: '2.2'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+    container_name: es1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/docker/elastic/node1/data:/usr/share/elasticsearch/data
+      - /home/docker/elastic/node1/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+    container_name: es2
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/docker/elastic/node2/data:/usr/share/elasticsearch/data
+      - /home/docker/elastic/node2/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - esnet
+networks:
+  esnet:
